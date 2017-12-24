@@ -1,0 +1,11 @@
+{
+  "name": "centos-for-small",
+  "repo": "centos-7",
+  "task": "centos/7",
+  "broker": "noop",
+  "enabled": true,
+  "hostname": "host${id}.fitznet.local",
+  "root_password": "secret",
+  "max_count": 20,
+  "tags": ["small"]
+}

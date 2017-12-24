@@ -1,0 +1,12 @@
+{
+  "name": "centos-small-puppet",
+  "repo": "centos-7",
+  "task": "centos/7",
+  "broker": "puppet",
+  "enabled": true,
+  "hostname": "host${id}.fitznet.local",
+  "root_password": "secret",
+  "max_count": 20,
+  "tags": ["small"]
+}
+

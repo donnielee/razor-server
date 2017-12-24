@@ -1,0 +1,18 @@
+pxeserver: ../pxe
+  image: spam4kev/pxe
+  links:
+   - razorserver
+  net: "host"
+  ports:
+    - 53:53/udp         #dnsmasq dns port
+    - 53:53/tcp         #dnsmasq dns port
+    - 67:67/udp         #dnsmasq dhcp/bootps port
+    - 68:68/udp         #dhcp bootp client
+    - 69:69/udp         #tftp port
+    - 4011:4011/udp    #tftp proxydhcp port
+  volumes:
+#    - /media/BitTorrent/operating_systems/:/tftpboot/images/
+    - /tftpboot/images/
+  working_dir: /tftpboot
+  command: /tmp/pxe-entrypoint-razor.sh
+

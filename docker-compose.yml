@@ -1,0 +1,65 @@
+# This file is used in conjunction with Dockerfile in this git repo to run the
+#  razor app across two containers locally.
+#
+version: '3'
+services:
+  razorserver:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: /etc/razor/razor-entrypoint.sh
+    volumes:
+      - /var/lib/razor:/var/lib/razor
+    networks:
+      - default
+    ports:
+      - 8080:8080
+    depends_on:
+      - "razordb"
+
+  razordb:
+    build:
+      context: ./pg-96
+      dockerfile: Dockerfile-pg-96
+    volumes:
+      - pgsql:/var/lib/pgsql
+    networks:
+      - default
+    ports:
+      - 5432:5432
+    privileged: true
+
+
+  razor-webui:
+    build: 
+      context: ./razor-webui
+      dockerfile: Dockerfile-razor-webui
+    networks:
+      - default
+    ports:
+      - 80:80
+    depends_on:
+      - "razorserver" 
+
+  pxeserver:
+  #  image: spam4kev/pxe
+    build: 
+      context: ./pxeserver
+      dockerfile: Dockerfile-pxeserver
+    volumes:
+      - /tftpboot/images/
+#      - /media/BitTorrent/operating_systems/:/tftpboot/images/
+    network_mode: "host"
+    working_dir: /tftpboot
+    command: /tmp/pxe-entrypoint-razor.sh
+    ports:
+      - 68:68/udp
+      - 69:69/udp
+      - 4011:4011/udp
+
+volumes:
+  pgsql:
+
+networks:
+  default:
+    driver: bridge

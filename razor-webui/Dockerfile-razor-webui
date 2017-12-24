@@ -1,0 +1,11 @@
+FROM centos:latest
+
+RUN yum update -y; yum clean all
+RUN yum -y install epel-release; yum -y install nginx; yum -y install net-tools;yum clean all
+COPY razor-ui/ /usr/share/nginx/html/ 
+COPY nginx.conf /etc/nginx/
+
+WORKDIR /usr/sbin
+CMD ["nginx", "-g", "daemon off;"]
+
+EXPOSE 80

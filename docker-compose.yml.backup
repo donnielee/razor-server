@@ -1,0 +1,45 @@
+# This file is used in conjunction with Dockerfile in this git repo to run the 
+#  razor app across two containers locally.
+#  
+razorserver:
+#  build: .        #use this line and comment out the next to cut time on deploy
+  image: spam4kev/razor-server                              #use this line and commend out the previous to get the latest build
+  command: /etc/razor/razor-entrypoint.sh
+  volumes: 
+    - /data/razor:/var/lib/razor
+  links:
+    - razordb
+  ports:
+    - 8150:8150
+razordb:
+  image: centos/postgresql-94-centos7
+#  build: .
+#  dockerfile: Dockerfile-pg-96
+  volumes: 
+    - /data/razor/pgsql:/var/lib/pgsql/data
+  environment:
+    POSTGRESQL_USER: razor
+    POSTGRESQL_PASSWORD: cloud000@
+    POSTGRESQL_DATABASE: razor_prd
+  ports:
+    - 5432:5432
+#pxeserver:
+#  image: spam4kev/pxe
+#  volumes:
+#    - /media/BitTorrent/operating_systems/:/tftpboot/images/
+#  links:
+#    - razorserver
+#  net: "host"
+#  working_dir: /tftpboot
+#  command: /tmp/pxe-entrypoint-razor.sh
+#  ports:
+#    - 68:68/udp
+#    - 69:69/udp
+#    - 4011:4011/udp
+razor-webui:
+  build: .
+  dockerfile: Dockerfile-razor-webui
+  links:
+    - razorserver
+  ports:
+    - 80:80

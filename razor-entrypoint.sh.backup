@@ -1,0 +1,16 @@
+#!/bin/sh
+#sed -i 's/\:razor_prd/\:\/\/razorserver_razordb_1\/razor_prd/' /etc/razor/config.yaml
+sed -i 's/\:razor_prd/\:\/\/postgresql\/razor_prd/' /etc/razor/config.yaml
+sed -i 's/user=razor/user=postgres/' /etc/razor/config.yaml
+curl -SL http://links.puppetlabs.com/razor-microkernel-latest.tar | tar -xC /var/lib/razor/repo-store/ 
+razor-admin -e production migrate-database
+
+exec >&"/var/log/razor-server/console.log" "/opt/razor-torquebox/jboss/bin/standalone.sh" \
+       "-Djboss.server.log.dir=/var/log/razor-server" \
+       "-b" "0.0.0.0" "-Dhttp.port=8080" \
+       "-Dhttps.port=8151" \
+#       "--env=production"
+
+#/opt/razor-torquebox/jruby/bin/torquebox deploy /opt/razor --env=production
+
+#nohup /opt/razor-torquebox/jruby/bin/torquebox run --bind-address 0.0.0.0 > /var/log/torquebox.log

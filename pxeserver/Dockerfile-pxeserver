@@ -1,0 +1,17 @@
+FROM centos:latest
+MAINTAINER "kev" spam4kev@gmail.com
+
+EXPOSE 53 53/tcp 67 68/udp 69/udp 69 4011/udp
+#RUN yum update
+RUN yum install -y wget \
+		   tftp-server \
+		   iproute \
+		   iptables-services \
+		   dnsmasq && \
+    mkdir /tftpboot
+COPY ./pxe-entrypoint.sh /tmp/pxe-entrypoint.sh
+COPY ./pxe-entrypoint-razor.sh /tmp/pxe-entrypoint-razor.sh
+COPY ./bootstrap.ipxe /tmp/bootstrap.ipxe
+RUN chmod +x /tmp/pxe-entrypoint* 
+WORKDIR /tftpboot
+CMD ["/tmp/pxe-entrypoint-razor.sh"]
